@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+#video-player {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 10000;
+}
+#video-player {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#video-player video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+.video-player .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-player .controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+
+.video-player .controls button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.video-player .controls input[type="range"] {
+  width: 93%;
+  margin: 0 1px ;
+}
+
+.video-player .controls span {
+  font-size: 16px;
+  margin: 0 10px;
+}
+
+.video-player .progress {
+  position: absolute;
+  bottom: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(50%);
+  height: 2px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.video-player .progress-bar {
+  height: 100%;
+  background: #fff;
+  transition: width 0.1s linear;
+}
+
+.video-player .controls button:hover,
+.video-player .controls input[type="range"]:hover,
+.video-player .controls span:hover {
+  color: #00ccff;
+}
+.video-player .controls button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .video-player .controls button.play-pause svg {
+    margin-left: -1px;
+  }
+
+@media (max-width: 767px) {
+  .video-player .controls {
+    flex-direction: column;
+    padding: 10px 0;
+  }
+
+  .video-player .controls button,
+  .video-player .controls span {
+    margin: 10px 0;
+  }
+
+  .video-player .controls input[type="range"] {
+    height: 5px;
+    border-radius: 2.5px;
+  }
+
+  .video-player .controls input[type="range"]::-webkit-slider-thumb {
+    width: 15px;
+    height: 15px;
+  }
+
+  .video-player .controls input[type="range"]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+#settings-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+#settings-btn:hover {
+  color: #333;
+
+}
+
+#settings-btn i {
+  margin-right: 8px;
+}
+
+#settings-menu {
+  display: none;
+  
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  width: 200px;
+  padding: 16px;
+  background-color: #181818;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#settings-menu h3 {
+  margin-top: 0;
+}
+
+#settings-menu label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+
+
+</style>
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+  const settingsBtn = document.getElementById("settings-btn");
+const settingsMenu = document.getElementById("settings-menu");
+const playbackSpeedSelect = document.getElementById("playback-speed");
+const videoPlayer = document.querySelector("#video-player");
+
+
+const video = document.querySelector('#my-video');
+const playPauseBtn = document.querySelector('#play-pause-btn');
+const volumeSlider = document.querySelector('#volume-slider');
+const fullScreenBtn = document.querySelector('#full-screen-btn');
+const currentTime = document.querySelector('#current-time');
+const duration = document.querySelector('#duration');
+const seekSlider = document.querySelector('#seek-slider');
+
+function togglePlayPause() {
+  if (video.paused) {
+    video.play();
+    playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+  } else {
+    video.pause();
+    playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+  }
+}
+
+function toggleFullScreen() {
+    var element = document.querySelector("#video-player");
+
+if (document.fullscreenElement) {
+    document.exitFullscreen();
+} else {
+    element.requestFullscreen();
+}
+ 
+}
+settingsBtn.addEventListener("click", function() {
+  // Toggle the settings menu display
+  if (settingsMenu.style.display === "none") {
+    settingsMenu.style.display = "block";
+  } else {
+    settingsMenu.style.display = "none";
+  }
+});
+
+playbackSpeedSelect.addEventListener("change", function() {
+  // Change the playback speed of the video player
+  video.playbackRate = parseFloat(this.value);
+});
+
+function updateTime() {
+  currentTime.textContent = formatTime(video.currentTime);
+  duration.textContent = formatTime(video.duration);
+  seekSlider.value = (video.currentTime / video.duration) * 100;
+}
+
+function updateVolume() {
+  video.volume = volumeSlider.value;
+}
+
+function updateSeek() {
+  video.currentTime = (seekSlider.value / 100) * video.duration;
+}
+
+function formatTime(time) {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
+
+playPauseBtn.addEventListener('click', togglePlayPause);
+volumeSlider.addEventListener('input', updateVolume);
+fullScreenBtn.addEventListener('click', toggleFullScreen);
+seekSlider.addEventListener('input', updateSeek);
+video.addEventListener('timeupdate', updateTime);
+})
+
+
+    </script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="video-player" id="video-player">
+        <video id="my-video" src="${videolocations}"></video>
+        <div class="controls">
+            <button id="play-pause-btn"><i class="fa-solid fa-play"></i></button>
+            <input id="seek-slider" type="range" min="0" max="100" step="0.0000001" value="0">
+            <span id="current-time">0:00</span>
+            <span id="duration">0:00</span>
+
+
+
+
+            <p><i ></i >
+            <input  id="volume-slider" type="range" min="0" max="1" step="0.0001" value="1"></p>
+            <button id="settings-btn">
+              <i class="fa fa-cog"></i> Settings
+            </button>
+            <div id="settings-menu">
+              <h3>Video Settings</h3>
+              <label for="playback-speed">Playback Speed:</label>
+              <select id="playback-speed">
+                <option value="0.5">0.5x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+              </select>
+            </div>
+          <button id="full-screen-btn"><i style="padding: 222;"  class="fa-solid fa-expand"></i></button>
+
+          
+        </div>
+      </div>
+      
+</body>
+</html>
